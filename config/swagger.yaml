@@ -1,0 +1,41 @@
+swagger: '2.0'
+info:
+  title: SoilType Data Lookup API
+  description: Lookup Data on Soiltype by lat/lon
+  version: "0.0.1"
+# the domain of the service
+host: localhost:8080
+# array of all schemes that your API supports
+schemes:
+  - http
+# will be prefixed to all paths
+basePath: /
+produces:
+  - application/json
+paths:
+  /lookups/soiltype:
+    get:
+      summary: Get Soiltype information
+      description: Get Soil type information based on latitude + longitude
+      parameters:
+        - name: lat
+          in: query
+          description: Latitude component of location, e.g. 51.501364
+          required: true
+          type: number
+          format: double
+        - name: lon
+          in: query
+          description: Longitude component of location, e.g. -0.14189
+          required: true
+          type: number
+          format: double
+      tags:
+        - soil
+      responses:
+        200:
+          description: The Soil Information
+        400:
+          description: Problem with Parameters
+        500:
+          description: Unexpected error
