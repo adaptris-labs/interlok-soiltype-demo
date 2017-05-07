@@ -217,7 +217,7 @@
               </json-transform-service>
               <standalone-producer>
                 <unique-id>SendResponse</unique-id>
-                <producer class="jetty-standard-reponse-producer">
+                <producer class="jetty-standard-response-producer">
                   <response-header-provider class="jetty-metadata-response-headers">
                     <filter class="regex-metadata-filter">
                       <include-pattern>Accept-Ranges</include-pattern>
@@ -234,7 +234,7 @@
                     <metadata-key>Content-Type</metadata-key>
                   </content-type-provider>
                   <send-payload>true</send-payload>
-                </producer>
+                </producer>                
               </standalone-producer>
             </services>
           </service-collection>
