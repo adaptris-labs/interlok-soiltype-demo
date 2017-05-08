@@ -66,7 +66,7 @@
               </json-transform-service>
               <standalone-producer>
                 <unique-id>SendResponse</unique-id>
-                <producer class="jetty-standard-reponse-producer">
+                <producer class="jetty-standard-response-producer">
                   <response-header-provider class="jetty-no-response-headers"/>
                   <status-provider class="http-configured-status">
                     <status>OK_200</status>
