@@ -28,6 +28,7 @@
     <dependency org="com.adaptris" name="adp-json" rev="${adp-core-version}" conf="runtime->default;javadoc->javadoc"  changing="true"/>
     <dependency org="com.adaptris" name="adp-ehcache" rev="${adp-core-version}" conf="runtime->default;javadoc->javadoc"  changing="true"/>
 
+    <dependency org="mysql" name="mysql-connector-java" rev="5.1.42" conf="runtime->default"/>
 
     <dependency org="com.thoughtworks.xstream" name="xstream" conf="runtime->default" rev="1.4.5" transitive="false"/>
     <!-- These are the dependencies for Log4j2 (including the excludes) -->
