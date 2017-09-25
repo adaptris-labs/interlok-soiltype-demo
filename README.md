@@ -1,4 +1,4 @@
-# interlok-soiltype-demo
+# interlok-soiltype-demo [![Docker Build Status](https://img.shields.io/docker/build/lewinc/interlok-soiltype-demo.svg)](https://hub.docker.com/r/lewinc/interlok-soiltype-demo/)
 
 Example docker image that uses Interlok to cache calls to https://rest.soilgrids.org/query, querying the soil composition for a specific lat/lon combination. If the lat/lon combination isn't in the cache, then we issue a query to rest.soilgrids.org and keep the results of the query in our cache.
 
