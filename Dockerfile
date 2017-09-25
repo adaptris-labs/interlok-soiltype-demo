@@ -6,11 +6,13 @@ EXPOSE 5555
 WORKDIR /opt/interlok
 ADD ant /opt/interlok/ant
 ADD config /opt/interlok/config
+ADD docker-entrypoint-memorydb.sh /
 
 RUN cd ant && \
     ant deploy && \
     rm -rf /root/.ivy2/cache/com.adaptris.ui && \
-    rm -rf /opt/interlok/ant 
+    chmod +x /docker-entrypoint-memorydb.sh && \
+    rm -rf /opt/interlok/ant
 
 
-ENTRYPOINT ["/docker-entrypoint.sh"]
+ENTRYPOINT ["/docker-entrypoint-memorydb.sh"]
