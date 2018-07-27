@@ -25,7 +25,7 @@
     <property name="swagger.version" value="2.2.3"/>
     <property name="swagger.distribution" value="https://github.com/swagger-api/swagger-ui/archive/v${swagger.version}.zip"/>
 
-    <property name="adp-core-version" value="3.7-SNAPSHOT"/>
+    <property name="interlok-core-version" value="3.8-SNAPSHOT"/>
 
     <property name="adapter.staging.directory" value="/opt/interlok"/>
     <property name="adapter.lib.directory" value="${adapter.staging.directory}/lib"/>
@@ -77,7 +77,7 @@
     <ivy:retrieve pattern="${adapter.webapps.directory}/[artifact].[ext]" conf="runtime" type="war" log="${ivy.logging}"/>
   </target>
 
-  
+
   <target name="clean" depends="init" description="Clean up artifacts">
     <delete file="${ivy.jar.file}" failonerror="false"/>
     <delete dir="${build.dir}"/>
