@@ -13,7 +13,7 @@ ext {
   slf4jVersion = '1.7.26'
   swaggerVersion = "2.2.3"
   swaggerDistribution = "https://github.com/swagger-api/swagger-ui/archive/v${swaggerVersion}.zip"
-  swaggerRewriteUrl = "http://localhost:8080/interlok/access/swagger.json"
+  swaggerRewriteUrl = "http://localhost:8080/lookups/swagger"
   lineSeparator = System.getProperty("line.separator")
 }
 
@@ -57,6 +57,8 @@ dependencies {
   interlokRuntime  group: "com.adaptris", name: "interlok-apache-http", version: "$interlokCoreVersion", changing: true
   interlokRuntime  group: "com.adaptris", name: "interlok-licensing", version: "$interlokCoreVersion", changing: true
   interlokRuntime  group: "com.adaptris", name: "interlok-ehcache", version: "$interlokCoreVersion", changing: true
+  interlokRuntime  group: "com.adaptris", name: "interlok-xinclude", version: "$interlokCoreVersion", changing: true
+  interlokRuntime  group: "com.adaptris", name: "interlok-varsub", version: "$interlokCoreVersion", changing: true
 
   // If you want javadocs.
   interlokJavaDocs group: "com.adaptris", name: "interlok-core", version: "$interlokCoreVersion", changing: true, classifier: "javadoc", transitive: false
