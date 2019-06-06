@@ -53,10 +53,16 @@ dependencies {
   interlokRuntime  group: "com.adaptris", name: "interlok-common", version: "$interlokCoreVersion", changing: true
   interlokRuntime  group: "com.adaptris", name: "interlok-logging", version: "$interlokCoreVersion", changing: true
   interlokRuntime  group: "com.adaptris", name: "interlok-core", version: "$interlokCoreVersion", changing: true
+  interlokRuntime  group: "com.adaptris", name: "interlok-json", version: "$interlokCoreVersion", changing: true
+  interlokRuntime  group: "com.adaptris", name: "interlok-apache-http", version: "$interlokCoreVersion", changing: true
   interlokRuntime  group: "com.adaptris", name: "interlok-licensing", version: "$interlokCoreVersion", changing: true
+  interlokRuntime  group: "com.adaptris", name: "interlok-ehcache", version: "$interlokCoreVersion", changing: true
 
   // If you want javadocs.
   interlokJavaDocs group: "com.adaptris", name: "interlok-core", version: "$interlokCoreVersion", changing: true, classifier: "javadoc", transitive: false
+  interlokJavaDocs group: "com.adaptris", name: "interlok-apache-http", version: "$interlokCoreVersion", changing: true, classifier: "javadoc", transitive: false
+  interlokJavaDocs group: "com.adaptris", name: "interlok-json", version: "$interlokCoreVersion", changing: true, classifier: "javadoc", transitive: false
+  interlokJavaDocs group: "com.adaptris", name: "interlok-ehcache", version: "$interlokCoreVersion", changing: true, classifier: "javadoc", transitive: false
 
   interlokRuntime group: "org.slf4j", name: "slf4j-api", version: "$slf4jVersion"
   interlokRuntime group: "org.slf4j", name: "jcl-over-slf4j", version: "$slf4jVersion"
@@ -115,8 +121,6 @@ distributions {
 installDist {
   destinationDir = new File(interlokInstallDirectory)
   preserve {
-    include 'ui-resources/**'
-    include 'etc/**'
-    include 'logs/**'
+    include '**/**'
   }
 }
