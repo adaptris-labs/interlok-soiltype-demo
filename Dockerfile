@@ -1,22 +1,29 @@
 FROM adaptris/interlok:snapshot-alpine
 
-EXPOSE 8080
-EXPOSE 5555
+EXPOSE 8080 5555
+
+ARG java_tool_opts
+ENV JAVA_TOOL_OPTIONS=$java_tool_opts
+
+COPY docker-entrypoint-memorydb.sh /
+COPY builder /root/builder
 
 WORKDIR /opt/interlok
-ADD ant /opt/interlok/ant
-ADD config /opt/interlok/config
-ADD docker-entrypoint-memorydb.sh /
 
-
-RUN \
-    apk add --no-cache --update apache-ant && \
-    rm -f /opt/interlok/adp-*.jar && \
-    cd ant && \
-    ant -emacs deploy && \
-    rm -rf /root/.ivy2/cache/com.adaptris.ui && \
+RUN cd /root/builder && \
+    chmod +x /root/builder/gradlew && \
+    rm -rf /opt/interlok/docs && \
+    ./gradlew --no-daemon installDist && \
+    chmod +x /docker-entrypoint.sh && \
     chmod +x /docker-entrypoint-memorydb.sh && \
-    rm -rf /opt/interlok/ant
+    rm -rf /root/.gradle && \
+    rm -rf /root/builder
 
+# Since config is a volume; gradlew installDist changes to the
+# config directory will be discarded; so let's add it
+# via docker
+COPY  builder/src/main/interlok/config /opt/interlok/config
+
+ENV JAVA_TOOL_OPTIONS=""
 
 ENTRYPOINT ["/docker-entrypoint-memorydb.sh"]
