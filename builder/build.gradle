@@ -3,7 +3,7 @@ plugins {
 }
 
 ext {
-  interlokCoreVersion = '3.8.4-RELEASE'
+  interlokCoreVersion = '3.9.0-RELEASE'
   interlokWarVersion = interlokCoreVersion
 
   nexusBaseUrl = project.hasProperty('nexusBaseUrl') ? project.getProperty('nexusBaseUrl') : 'https://nexus.adaptris.net/nexus'
