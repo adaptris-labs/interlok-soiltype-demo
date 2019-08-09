@@ -9,7 +9,7 @@ ext {
   nexusBaseUrl = project.hasProperty('nexusBaseUrl') ? project.getProperty('nexusBaseUrl') : 'https://nexus.adaptris.net/nexus'
 
   interlokInstallDirectory = project.hasProperty('interlokInstallDirectory') ? project.getProperty('interlokInstallDirectory') :  "/opt/interlok"
-  log4j2Version = '2.12.0'
+  log4j2Version = '2.12.1'
   slf4jVersion = '1.7.26'
   swaggerVersion = "2.2.3"
   swaggerDistribution = "https://github.com/swagger-api/swagger-ui/archive/v${swaggerVersion}.zip"
