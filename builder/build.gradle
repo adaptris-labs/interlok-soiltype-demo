@@ -6,7 +6,7 @@ ext {
   interlokCoreVersion = '3.9.0-RELEASE'
   interlokWarVersion = interlokCoreVersion
 
-  nexusBaseUrl = project.hasProperty('nexusBaseUrl') ? project.getProperty('nexusBaseUrl') : 'https://nexus.adaptris.net/nexus'
+  nexusBaseUrl = 'https://nexus.adaptris.net/nexus'
 
   interlokInstallDirectory = project.hasProperty('interlokInstallDirectory') ? project.getProperty('interlokInstallDirectory') :  "/opt/interlok"
   log4j2Version = '2.12.1'
