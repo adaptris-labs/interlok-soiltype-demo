@@ -3,7 +3,7 @@ plugins {
 }
 
 ext {
-  interlokCoreVersion = '3.9.0-RELEASE'
+  interlokCoreVersion = '3.9.1-RELEASE'
   interlokWarVersion = interlokCoreVersion
   interlokInstallDirectory = project.hasProperty('interlokInstallDirectory') ? project.getProperty('interlokInstallDirectory') :  "/opt/interlok"
   log4j2Version = '2.12.1'
