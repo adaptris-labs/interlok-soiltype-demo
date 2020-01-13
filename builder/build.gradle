@@ -63,7 +63,7 @@ dependencies {
   interlokJavaDocs group: "com.adaptris", name: "interlok-json", version: "$interlokCoreVersion", changing: true, classifier: "javadoc", transitive: false
   interlokJavaDocs group: "com.adaptris", name: "interlok-ehcache", version: "$interlokCoreVersion", changing: true, classifier: "javadoc", transitive: false
 
-  interlokRuntime group: "mysql", name: "mysql-connector-java", version: "5.1.47"
+  interlokRuntime group: "mysql", name: "mysql-connector-java", version: "8.0.19"
   interlokRuntime group: "org.slf4j", name: "slf4j-api", version: "$slf4jVersion"
   interlokRuntime group: "org.slf4j", name: "jcl-over-slf4j", version: "$slf4jVersion"
   interlokRuntime group: "org.slf4j", name: "jul-to-slf4j", version: "$slf4jVersion"
