@@ -172,7 +172,9 @@
                           <method-provider class="http-configured-request-method">
                             <method>GET</method>
                           </method-provider>
-                          <response-header-handler class="apache-http-response-headers-as-metadata"/>
+                          <response-header-handler class="apache-http-response-headers-as-metadata">
+                            <metadata-prefix>SoilGrids_</metadata-prefix>
+                          </response-header-handler>
                           <ignore-server-response-code>true</ignore-server-response-code>
                         </producer>
                       </standalone-requestor>
@@ -198,7 +200,7 @@
                       <!-- Add metadata that would be driven from remote request -->
                       <add-metadata-service>
                         <metadata-element>
-                          <key>Content-Type</key>
+                          <key>SoilGrids_Content-Type</key>
                           <value>application/json</value>
                         </metadata-element>
                         <metadata-element>
@@ -237,6 +239,11 @@
                 </mapping-spec>
                 <metadata-filter class="regex-metadata-filter"/>
               </json-transform-service>
+              <metadata-key-to-upper-case>
+                <keys-to-modify class="regex-metadata-filter">
+                  <include-pattern>^SoilGrids.*$</include-pattern>
+                </keys-to-modify>
+              </metadata-key-to-upper-case>
               <standalone-producer>
                 <unique-id>SendResponse</unique-id>
                 <producer class="jetty-standard-response-producer">
@@ -253,7 +260,7 @@
                     <code-key>adphttpresponse</code-key>
                   </status-provider>
                   <content-type-provider class="http-metadata-content-type-provider">
-                    <metadata-key>Content-Type</metadata-key>
+                    <metadata-key>SOILGRIDS_CONTENT-TYPE</metadata-key>
                   </content-type-provider>
                   <send-payload>true</send-payload>
                 </producer>

@@ -1,79 +1,29 @@
-plugins {
-  id "distribution"
-}
-
 ext {
-  interlokCoreVersion = '3.10.1-RELEASE'
-  interlokWarVersion = interlokCoreVersion
-  interlokInstallDirectory = project.hasProperty('interlokInstallDirectory') ? project.getProperty('interlokInstallDirectory') :  "/opt/interlok"
-  log4j2Version = '2.13.3'
-  slf4jVersion = '1.7.30'
+  interlokParentGradle = project.findProperty('interlokParentGradle') ?: 'https://raw.githubusercontent.com/adaptris-labs/interlok-build-parent/master/build.gradle'
+  interlokDistDirectory = project.findProperty('interlokDistDirectory') ?:  "/opt/interlok"
   swaggerVersion = "2.2.3"
   swaggerDistribution = "https://github.com/swagger-api/swagger-ui/archive/v${swaggerVersion}.zip"
   swaggerRewriteUrl = "http://localhost:8080/lookups/swagger"
   lineSeparator = System.getProperty("line.separator")
 }
 
-distTar.enabled=false
-distZip.enabled=true
 
-repositories {
-  mavenCentral()
-  maven { url "https://nexus.adaptris.net/nexus/content/groups/public" }
-  maven { url "https://nexus.adaptris.net/nexus/content/groups/interlok" }
-}
-
-
-configurations() {
-  interlokRuntime{}
-  interlokJavaDocs{}
-  interlokWar{}
-  all*.exclude group: 'c3p0'
-  all*.exclude group: 'commons-logging'
-  all*.exclude group: 'javamail'
-  all*.exclude group: 'javax.mail', module: 'mail'
-  all*.exclude group: 'org.glassfish.hk2.external'
-  all*.exclude group: 'xalan', module: 'xalan'
-  all*.exclude group: 'net.sf.saxon', module: 'saxon'
-  all*.exclude group: 'org.codehaus.woodstox'
-  all*.exclude group: 'org.eclipse.jetty.orbit', module: 'javax.mail.glassfish'
-  all*.exclude group: 'com.vaadin.external.google', module: 'android-json'
-}
-
-configurations.all {
-  resolutionStrategy.cacheChangingModulesFor 0, "seconds"
+allprojects {
+  apply from: "${interlokParentGradle}"
 }
 
 dependencies {
-  interlokRuntime  group: "com.adaptris", name: "interlok-core-apt", version: "$interlokCoreVersion", changing: true
-  interlokRuntime  group: "com.adaptris", name: "interlok-boot", version: "$interlokCoreVersion", changing: true
-  interlokRuntime  group: "com.adaptris", name: "interlok-common", version: "$interlokCoreVersion", changing: true
-  interlokRuntime  group: "com.adaptris", name: "interlok-logging", version: "$interlokCoreVersion", changing: true
-  interlokRuntime  group: "com.adaptris", name: "interlok-core", version: "$interlokCoreVersion", changing: true
-  interlokRuntime  group: "com.adaptris", name: "interlok-json", version: "$interlokCoreVersion", changing: true
-  interlokRuntime  group: "com.adaptris", name: "interlok-apache-http", version: "$interlokCoreVersion", changing: true
-  interlokRuntime  group: "com.adaptris", name: "interlok-licensing", version: "$interlokCoreVersion", changing: true
-  interlokRuntime  group: "com.adaptris", name: "interlok-ehcache", version: "$interlokCoreVersion", changing: true
-  interlokRuntime  group: "com.adaptris", name: "interlok-xinclude", version: "$interlokCoreVersion", changing: true
-  interlokRuntime  group: "com.adaptris", name: "interlok-varsub", version: "$interlokCoreVersion", changing: true
+  interlokRuntime ("com.adaptris:interlok-json:$interlokVersion") { changing=true }
+  interlokRuntime ("com.adaptris:interlok-xinclude:$interlokVersion") { changing=true }
+  interlokRuntime ("com.adaptris:interlok-apache-http:$interlokVersion") { changing=true }
+  interlokRuntime ("com.adaptris:interlok-ehcache:$interlokVersion") { changing=true }
+  interlokRuntime ("mysql:mysql-connector-java:5.1.47")
 
   // If you want javadocs.
-  interlokJavaDocs group: "com.adaptris", name: "interlok-core", version: "$interlokCoreVersion", changing: true, classifier: "javadoc", transitive: false
-  interlokJavaDocs group: "com.adaptris", name: "interlok-apache-http", version: "$interlokCoreVersion", changing: true, classifier: "javadoc", transitive: false
-  interlokJavaDocs group: "com.adaptris", name: "interlok-json", version: "$interlokCoreVersion", changing: true, classifier: "javadoc", transitive: false
-  interlokJavaDocs group: "com.adaptris", name: "interlok-ehcache", version: "$interlokCoreVersion", changing: true, classifier: "javadoc", transitive: false
+  interlokJavadocs group: "com.adaptris", name: "interlok-apache-http", version: "$interlokVersion", changing: true, classifier: "javadoc", transitive: false
+  interlokJavadocs group: "com.adaptris", name: "interlok-json", version: "$interlokVersion", changing: true, classifier: "javadoc", transitive: false
+  interlokJavadocs group: "com.adaptris", name: "interlok-ehcache", version: "$interlokVersion", changing: true, classifier: "javadoc", transitive: false
 
-  interlokRuntime group: "mysql", name: "mysql-connector-java", version: "5.1.47"
-  interlokRuntime group: "org.slf4j", name: "slf4j-api", version: "$slf4jVersion"
-  interlokRuntime group: "org.slf4j", name: "jcl-over-slf4j", version: "$slf4jVersion"
-  interlokRuntime group: "org.slf4j", name: "jul-to-slf4j", version: "$slf4jVersion"
-
-  interlokRuntime group: "org.apache.logging.log4j", name: "log4j-core", version: "$log4j2Version"
-  interlokRuntime group: "org.apache.logging.log4j", name: "log4j-1.2-api", version: "$log4j2Version"
-  interlokRuntime group: "org.apache.logging.log4j", name: "log4j-slf4j-impl", version: "$log4j2Version"
-  interlokRuntime group: "org.apache.logging.log4j", name: "log4j-api", version: "$log4j2Version"
-
-  interlokWar group: "com.adaptris.ui", name: "interlok", version: "$interlokWarVersion", ext: "war", changing: true
 }
 
 
@@ -96,30 +46,15 @@ task swagger () {
 distributions {
   main {
     contents {
-      from {
-        "src/main/interlok"
-      }
-      into('lib') {
-        from(project.configurations.interlokRuntime)
-      }
       into('webapps/swagger') {
         from(swagger)
       }
-      into('webapps') {
-        from(project.configurations.interlokWar)
-      }
-      into('docs/javadocs') {
-        from(project.configurations.interlokJavaDocs)
-      }
-      rename '(.*)-[0-9]+\\..*.jar', '$1.jar'
-      rename '(.*)-[0-9]+\\..*.war', '$1.war'
-      duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     }
   }
 }
 
 installDist {
-  destinationDir = new File(interlokInstallDirectory)
+  destinationDir = new File(interlokDistDirectory)
   preserve {
     include '**/**'
   }
