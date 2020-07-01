@@ -1,0 +1,63 @@
+ext {
+  interlokParentGradle = project.findProperty('interlokParentGradle') ?: 'https://raw.githubusercontent.com/adaptris-labs/interlok-build-parent/master/build.gradle'
+  // interlokDistDirectory = project.findProperty('interlokDistDirectory') ?:  "/opt/interlok"
+  swaggerVersion = "2.2.3"
+  swaggerDistribution = "https://github.com/swagger-api/swagger-ui/archive/v${swaggerVersion}.zip"
+  swaggerRewriteUrl = "http://localhost:8080/lookups/swagger"
+  lineSeparator = System.getProperty("line.separator")
+  interlokVersion='3.10.2B2-RELEASE'
+  includeWar='true'
+}
+
+
+allprojects {
+  apply from: "${interlokParentGradle}"
+}
+
+dependencies {
+  interlokRuntime ("com.adaptris:interlok-json:$interlokVersion") { changing=true }
+  interlokRuntime ("com.adaptris:interlok-xinclude:$interlokVersion") { changing=true }
+  interlokRuntime ("com.adaptris:interlok-apache-http:$interlokVersion") { changing=true }
+  interlokRuntime ("com.adaptris:interlok-ehcache:$interlokVersion") { changing=true }
+  interlokRuntime ("mysql:mysql-connector-java:5.1.47")
+
+  // If you want javadocs.
+  interlokJavadocs group: "com.adaptris", name: "interlok-apache-http", version: "$interlokVersion", changing: true, classifier: "javadoc", transitive: false
+  interlokJavadocs group: "com.adaptris", name: "interlok-json", version: "$interlokVersion", changing: true, classifier: "javadoc", transitive: false
+  interlokJavadocs group: "com.adaptris", name: "interlok-ehcache", version: "$interlokVersion", changing: true, classifier: "javadoc", transitive: false
+
+}
+
+
+task swagger () {
+  outputs.file new File("${buildDir}/swagger/swagger-ui-${swaggerVersion}/dist")
+  doLast {
+    mkdir("${buildDir}")
+    ant.get(src: "${swaggerDistribution}", dest: "${buildDir}/swagger-${swaggerVersion}.zip", usetimestamp: 'true', quiet: 'true')
+    copy {
+      from zipTree("${buildDir}/swagger-${swaggerVersion}.zip")
+      into "${buildDir}/swagger"
+    }
+    ant.replace(file: "${buildDir}/swagger/swagger-ui-${swaggerVersion}/dist/index.html", token: 'http://petstore.swagger.io/v2/swagger.json', value: "${swaggerRewriteUrl}", preserveLastModified: 'true')
+    ant.replace(file: "${buildDir}/swagger/swagger-ui-${swaggerVersion}/dist/index.html", token: '        url: url,', value: "        url: url,${lineSeparator}        validatorUrl: null,", preserveLastModified: 'true')
+    ant.fixcrlf(file: "${buildDir}/swagger/swagger-ui-${swaggerVersion}/dist/index.html", eol: 'lf', eof: 'remove', preserveLastModified: 'true')
+    delete "${buildDir}/swagger-${swaggerVersion}.zip"
+  }
+}
+
+distributions {
+  main {
+    contents {
+      into('webapps/swagger') {
+        from(swagger)
+      }
+    }
+  }
+}
+
+installDist {
+  destinationDir = new File(interlokDistDirectory)
+  preserve {
+    include '**/**'
+  }
+}

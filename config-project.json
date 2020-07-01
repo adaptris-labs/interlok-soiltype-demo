@@ -1,0 +1,19 @@
+{
+  "name" : "soiltype-demo",
+  "variableSets" : {
+    "default" : { }
+  },
+  "variableXpaths" : {
+    "/adapter/channel-list/channel[unique-id=\"SoilData\"]/workflow-list/standard-workflow[unique-id=\"Swagger\"]/service-collection/services/read-file-service[unique-id=\"read-swagger\"]/file-path" : "${swagger.yaml.file}",
+    "/adapter/channel-list/channel[unique-id=\"SoilData\"]/workflow-list/standard-workflow[unique-id=\"Swagger\"]/service-collection/services/add-metadata-service[unique-id=\"add-hostname\"]/metadata-element[1]/value" : "${adapter.api.hostname}",
+    "/adapter/channel-list/channel[unique-id=\"SoilData\"]/workflow-list/pooling-workflow[unique-id=\"DoLookup\"]/service-collection/services/add-formatted-metadata-service[unique-id=\"GenerateURL\"]/format-string" : "${soiltypes.url}",
+    "/adapter/channel-list/channel[unique-id=\"SoilData\"]/workflow-list/pooling-workflow[unique-id=\"DoLookup\"]/service-collection/services/json-transform-service[unique-id=\"add-cache-marker\"]/mapping-spec/destination/destination" : "${adapter.soiltype.mapping.url}"
+  },
+  "uidInXincludeCompntListFileName" : false,
+  "xincludeXpaths" : { },
+  "additionalFiles" : {
+    "log4j2.xml" : "log4j2.xml"
+  },
+  "optionalComponentsInUse" : [ "com.adaptris:interlok-json:3.10.2B2-RELEASE", "com.adaptris:interlok-apache-http:3.10.2B2-RELEASE", "com.adaptris:interlok-ehcache:3.10.2B2-RELEASE" ],
+  "structured" : true
+}

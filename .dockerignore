@@ -1,0 +1,8 @@
+.git
+.gitattributes
+.gitignore
+README.md
+build
+.gradle
+.github
+.dependabot
