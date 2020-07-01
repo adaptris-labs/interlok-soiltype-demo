@@ -12,7 +12,7 @@ WORKDIR /opt/interlok
 RUN cd /root/builder && \
     chmod +x /root/builder/gradlew && \
     rm -rf /opt/interlok/docs && \
-    ./gradlew --no-daemon check installDist && \
+    ./gradlew --no-daemon -PinterlokDistDirectory=/opt/interlok check installDist && \
     chmod +x /docker-entrypoint.sh && \
     rm -rf /root/.gradle && \
     rm -rf /root/builder

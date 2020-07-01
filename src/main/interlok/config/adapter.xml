@@ -1,124 +1,151 @@
-<adapter
-  xmlns:xi="http://www.w3.org/2001/XInclude">
-  <unique-id>${adapter.unique.id}</unique-id>
+<adapter>
+  <unique-id>soiltype-demo</unique-id>
+  <start-up-event-imp>com.adaptris.core.event.StandardAdapterStartUpEvent</start-up-event-imp>
+  <heartbeat-event-imp>com.adaptris.core.HeartbeatEvent</heartbeat-event-imp>
   <shared-components>
     <connections>
       <cache-connection>
         <unique-id>soil-type-cache</unique-id>
         <cache-instance class="default-ehcache">
           <cache-name>SoilTypeCache</cache-name>
-          <eviction-policy>LRU</eviction-policy>
+          <event-listener>
+            <listeners/>
+          </event-listener>
           <max-elements-in-memory>10</max-elements-in-memory>
+          <eviction-policy>LRU</eviction-policy>
         </cache-instance>
       </cache-connection>
       <jetty-embedded-connection>
         <unique-id>jetty-connection</unique-id>
       </jetty-embedded-connection>
     </connections>
+    <services/>
   </shared-components>
+  <event-handler class="default-event-handler">
+    <unique-id>DefaultEventHandler</unique-id>
+    <connection class="null-connection">
+      <unique-id>cocky-nightingale</unique-id>
+    </connection>
+    <producer class="null-message-producer">
+      <unique-id>agitated-volhard</unique-id>
+    </producer>
+  </event-handler>
   <heartbeat-event-interval>
     <unit>MINUTES</unit>
     <interval>60</interval>
   </heartbeat-event-interval>
   <message-error-handler class="standard-processing-exception-handler">
+    <unique-id>default-error-handler</unique-id>
     <processing-exception-service class="service-list">
+      <unique-id>send-json-error</unique-id>
       <services>
         <exception-report-service>
+          <unique-id>exception-as-json</unique-id>
           <exception-serializer class="exception-as-json-with-stacktrace"/>
         </exception-report-service>
-        <standalone-producer>
-          <producer class="jetty-standard-response-producer">
-            <status-provider class="http-configured-status">
-              <status>INTERNAL_ERROR_500</status>
-            </status-provider>
-            <content-type-provider class="http-configured-content-type-provider">
-              <mime-type>application/json</mime-type>
-            </content-type-provider>
-            <send-payload>true</send-payload>
-          </producer>
-        </standalone-producer>
+        <jetty-response-service>
+          <unique-id>send-response</unique-id>
+          <http-status>500</http-status>
+          <content-type>application/json</content-type>
+          <response-header-provider class="jetty-no-response-headers"/>
+        </jetty-response-service>
       </services>
     </processing-exception-service>
   </message-error-handler>
+  <failed-message-retrier class="no-retries">
+    <unique-id>gloomy-heyrovsky</unique-id>
+  </failed-message-retrier>
   <channel-list>
     <channel>
-      <auto-start>true</auto-start>
-      <unique-id>SoilData</unique-id>
       <consume-connection class="shared-connection">
         <lookup-name>jetty-connection</lookup-name>
       </consume-connection>
+      <produce-connection class="null-connection">
+        <unique-id>elated-goodall</unique-id>
+      </produce-connection>
       <workflow-list>
         <standard-workflow>
-          <unique-id>Swagger</unique-id>
-          <send-events>false</send-events>
           <consumer class="jetty-message-consumer">
             <unique-id>/lookups/swagger</unique-id>
             <destination class="configured-consume-destination">
-              <configured-thread-name>Swagger</configured-thread-name>
-              <filter-expression>GET</filter-expression>
               <destination>/lookups/swagger/*</destination>
+              <filter-expression>GET</filter-expression>
             </destination>
             <parameter-handler class="jetty-http-parameters-as-metadata"/>
             <header-handler class="jetty-http-ignore-headers"/>
           </consumer>
           <service-collection class="service-list">
+            <unique-id>sad-hodgkin</unique-id>
             <services>
-              <aggregating-fs-consume-service>
-                <fs-consumer>
-                  <destination class="consume-destination-from-metadata">
-                    <default-destination>${swagger.yaml.file}</default-destination>
-                  </destination>
-                  <delete-aggregated-files>false</delete-aggregated-files>
-                  <message-aggregator class="replace-with-first-message-aggregator"/>
-                </fs-consumer>
-              </aggregating-fs-consume-service>
+              <add-metadata-service>
+                <unique-id>add-hostname</unique-id>
+                <metadata-element>
+                  <key>api_host</key>
+                  <value>${adapter.api.hostname}</value>
+                </metadata-element>
+              </add-metadata-service>
+              <read-file-service>
+                <unique-id>read-swagger</unique-id>
+                <file-path>${swagger.yaml.file}</file-path>
+              </read-file-service>
               <yaml-to-json>
+                <unique-id>yaml-to-json</unique-id>
                 <source class="string-payload-data-input-parameter"/>
                 <target class="string-payload-data-output-parameter"/>
               </yaml-to-json>
-              <!-- rewrite the swagger so it has the correct hostname -->
               <json-transform-service>
+                <unique-id>replace-localhost</unique-id>
                 <source-json class="string-payload-data-input-parameter"/>
-                <target-json class="string-payload-data-output-parameter"/>
                 <mapping-spec class="constant-data-input-parameter">
-                  <value>[{ "operation": "remove", "spec": {"host": "" }},{"operation": "shift", "spec": { "*": "&amp;","#${adapter.api.hostname}": "host"}}]</value>
+                  <value>[{ "operation": "remove", "spec": {"host": "" }},{"operation": "shift", "spec": { "*": "&amp;","%message{api_host}": "host"}}]</value>
                 </mapping-spec>
+                <target-json class="string-payload-data-output-parameter"/>
                 <metadata-filter class="regex-metadata-filter"/>
               </json-transform-service>
-              <standalone-producer>
-                <unique-id>SendResponse</unique-id>
-                <producer class="jetty-standard-response-producer">
-                  <response-header-provider class="jetty-no-response-headers"/>
-                  <status-provider class="http-configured-status">
-                    <status>OK_200</status>
-                  </status-provider>
-                  <content-type-provider class="http-configured-content-type-provider">
-                    <mime-type>application/json</mime-type>
-                  </content-type-provider>
-                  <send-payload>true</send-payload>
-                </producer>
-              </standalone-producer>
+              <jetty-response-service>
+                <unique-id>send-response</unique-id>
+                <http-status>200</http-status>
+                <content-type>application/json</content-type>
+                <response-header-provider class="jetty-no-response-headers"/>
+              </jetty-response-service>
             </services>
           </service-collection>
+          <producer class="null-message-producer">
+            <unique-id>berserk-bose</unique-id>
+          </producer>
+          <send-events>false</send-events>
+          <produce-exception-handler class="null-produce-exception-handler"/>
+          <unique-id>Swagger</unique-id>
+          <message-metrics-interceptor>
+            <unique-id>Swagger-MessageMetrics</unique-id>
+            <timeslice-duration>
+              <unit>MINUTES</unit>
+              <interval>5</interval>
+            </timeslice-duration>
+            <timeslice-history-count>12</timeslice-history-count>
+          </message-metrics-interceptor>
+          <in-flight-workflow-interceptor>
+            <unique-id>Swagger-InFlight</unique-id>
+          </in-flight-workflow-interceptor>
         </standard-workflow>
         <pooling-workflow>
-          <unique-id>DoLookup</unique-id>
-          <send-events>false</send-events>
           <consumer class="jetty-message-consumer">
             <unique-id>/lookups/soiltype</unique-id>
             <destination class="configured-consume-destination">
-              <configured-thread-name>SoiltypeLookup</configured-thread-name>
               <destination>/lookups/soiltype</destination>
             </destination>
             <parameter-handler class="jetty-http-parameters-as-metadata"/>
             <header-handler class="jetty-http-ignore-headers"/>
           </consumer>
           <service-collection class="service-list">
+            <unique-id>cranky-hugle</unique-id>
             <services>
               <trim-metadata-service>
+                <unique-id>trim-spaces</unique-id>
                 <metadata-key-regexp>^(lat|lon)$</metadata-key-regexp>
               </trim-metadata-service>
               <validate-metadata-service>
+                <unique-id>validate-has-latlon</unique-id>
                 <required-key>lat</required-key>
                 <required-key>lon</required-key>
               </validate-metadata-service>
@@ -136,143 +163,133 @@
                 <argument-metadata-key>lon</argument-metadata-key>
                 <metadata-key>soilTypeKey</metadata-key>
               </add-formatted-metadata-service>
-              <branching-service-collection>
-                <first-service-id>checkCache</first-service-id>
-                <services>
-                  <check-cache>
-                    <unique-id>checkCache</unique-id>
-                    <connection class="shared-connection">
-                      <lookup-name>soil-type-cache</lookup-name>
-                    </connection>
-                    <cache-entry-evaluator>
-                      <key-translator class="metadata-cache-value-translator">
-                        <metadata-key>soilTypeKey</metadata-key>
-                      </key-translator>
-                    </cache-entry-evaluator>
-                    <keys-not-found-service-id>GetSoilTypeFromRemote</keys-not-found-service-id>
-                    <keys-found-service-id>GetSoilTypeFromCache</keys-found-service-id>
-                  </check-cache>
-                  <service-list>
-                    <unique-id>GetSoilTypeFromRemote</unique-id>
+              <if-then-otherwise>
+                <unique-id>check-cache</unique-id>
+                <condition class="exists-in-cache">
+                  <connection class="shared-connection">
+                    <lookup-name>soil-type-cache</lookup-name>
+                  </connection>
+                  <key>%message{soilTypeKey}</key>
+                </condition>
+                <then>
+                  <service class="service-list">
+                    <unique-id>in-cache</unique-id>
                     <services>
-                      <!-- Mark it as not from the cache -->
                       <add-metadata-service>
-                        <metadata-element>
-                          <key>data.from.cache</key>
-                          <value>false</value>
-                        </metadata-element>
-                      </add-metadata-service>
-
-                      <!-- Do the Call -->
-                      <standalone-requestor>
-                        <producer class="apache-http-producer">
-                          <destination class="metadata-destination">
-                            <key>soilTypeLookupURL</key>
-                          </destination>
-                          <method-provider class="http-configured-request-method">
-                            <method>GET</method>
-                          </method-provider>
-                          <response-header-handler class="apache-http-response-headers-as-metadata">
-                            <metadata-prefix>SoilGrids_</metadata-prefix>
-                          </response-header-handler>
-                          <ignore-server-response-code>true</ignore-server-response-code>
-                        </producer>
-                      </standalone-requestor>
-
-                      <!-- Add to the cache -->
-                      <add-to-cache>
-                        <connection class="shared-connection">
-                          <lookup-name>soil-type-cache</lookup-name>
-                        </connection>
-                        <cache-entry-evaluator>
-                          <key-translator class="metadata-cache-value-translator">
-                            <metadata-key>soilTypeKey</metadata-key>
-                          </key-translator>
-                          <value-translator class="string-payload-cache-translator"/>
-                        </cache-entry-evaluator>
-                      </add-to-cache>
-
-                    </services>
-                  </service-list>
-                  <service-list>
-                    <unique-id>GetSoilTypeFromCache</unique-id>
-                    <services>
-                      <!-- Add metadata that would be driven from remote request -->
-                      <add-metadata-service>
-                        <metadata-element>
-                          <key>SoilGrids_Content-Type</key>
-                          <value>application/json</value>
-                        </metadata-element>
+                        <unique-id>mark-as-from-cache</unique-id>
                         <metadata-element>
                           <key>adphttpresponse</key>
                           <value>200</value>
+                        </metadata-element>
+                        <metadata-element>
+                          <key>SoilGrids_Content-Type</key>
+                          <value>application/json</value>
                         </metadata-element>
                         <metadata-element>
                           <key>data.from.cache</key>
                           <value>true</value>
                         </metadata-element>
                       </add-metadata-service>
-
-                      <!-- Get it from the cache -->
-                      <retrieve-from-cache>
+                      <get-single-value-from-cache>
+                        <unique-id>get-from-cache</unique-id>
                         <connection class="shared-connection">
                           <lookup-name>soil-type-cache</lookup-name>
                         </connection>
-                        <cache-entry-evaluator>
-                          <key-translator class="metadata-cache-value-translator">
-                            <metadata-key>soilTypeKey</metadata-key>
-                          </key-translator>
-                          <value-translator class="string-payload-cache-translator"/>
-                        </cache-entry-evaluator>
-                      </retrieve-from-cache>
+                        <key>%message{soilTypeKey}</key>
+                        <value-translator class="string-payload-cache-translator"/>
+                      </get-single-value-from-cache>
                     </services>
-                  </service-list>
-                </services>
-              </branching-service-collection>
+                  </service>
+                </then>
+                <otherwise>
+                  <service class="service-list">
+                    <unique-id>not-in-cache</unique-id>
+                    <services>
+                      <add-metadata-service>
+                        <unique-id>mark-as-remote</unique-id>
+                        <metadata-element>
+                          <key>data.from.cache</key>
+                          <value>false</value>
+                        </metadata-element>
+                      </add-metadata-service>
+                      <apache-http-request-service>
+                        <unique-id>execute-soilgrids</unique-id>
+                        <url>%message{soilTypeLookupURL}</url>
+                        <content-type>text/plain</content-type>
+                        <method>GET</method>
+                        <response-header-handler class="apache-http-response-headers-as-metadata">
+                          <metadata-prefix>SoilGrids_</metadata-prefix>
+                        </response-header-handler>
+                        <request-header-provider class="apache-http-no-request-headers"/>
+                        <authenticator class="http-no-authentication"/>
+                      </apache-http-request-service>
+                      <add-single-value-to-cache>
+                        <unique-id>add-to-cache</unique-id>
+                        <connection class="shared-connection">
+                          <lookup-name>soil-type-cache</lookup-name>
+                        </connection>
+                        <key>%message{soilTypeKey}</key>
+                        <value-translator class="string-payload-cache-translator"/>
+                      </add-single-value-to-cache>
+                    </services>
+                  </service>
+                </otherwise>
+              </if-then-otherwise>
               <json-transform-service>
+                <unique-id>add-cache-marker</unique-id>
                 <source-json class="string-payload-data-input-parameter"/>
-                <target-json class="string-payload-data-output-parameter"/>
                 <mapping-spec class="file-data-input-parameter">
                   <destination class="configured-produce-destination">
                     <destination>${adapter.soiltype.mapping.url}</destination>
                   </destination>
                 </mapping-spec>
-                <metadata-filter class="regex-metadata-filter"/>
+                <target-json class="string-payload-data-output-parameter"/>
+                <metadata-filter class="regex-metadata-filter">
+                  <include-pattern>data.from.cache</include-pattern>
+                </metadata-filter>
               </json-transform-service>
               <metadata-key-to-upper-case>
+                <unique-id>soilgrids-metadata-toupper</unique-id>
                 <keys-to-modify class="regex-metadata-filter">
                   <include-pattern>^SoilGrids.*$</include-pattern>
                 </keys-to-modify>
               </metadata-key-to-upper-case>
-              <standalone-producer>
-                <unique-id>SendResponse</unique-id>
-                <producer class="jetty-standard-response-producer">
-                  <response-header-provider class="jetty-metadata-response-headers">
-                    <filter class="regex-metadata-filter">
-                      <include-pattern>Accept-Ranges</include-pattern>
-                      <include-pattern>Cache-Control</include-pattern>
-                      <include-pattern>Expires</include-pattern>
-                      <include-pattern>Last-Modified</include-pattern>
-                      <include-pattern>ETag</include-pattern>
-                    </filter>
-                  </response-header-provider>
-                  <status-provider class="http-metadata-status">
-                    <code-key>adphttpresponse</code-key>
-                  </status-provider>
-                  <content-type-provider class="http-metadata-content-type-provider">
-                    <metadata-key>SOILGRIDS_CONTENT-TYPE</metadata-key>
-                  </content-type-provider>
-                  <send-payload>true</send-payload>
-                </producer>
-              </standalone-producer>
+              <jetty-response-service>
+                <unique-id>send-response</unique-id>
+                <http-status>%message{adphttpresponse}</http-status>
+                <content-type>%message{SOILGRIDS_CONTENT-TYPE}</content-type>
+                <response-header-provider class="jetty-no-response-headers"/>
+              </jetty-response-service>
             </services>
           </service-collection>
+          <producer class="null-message-producer">
+            <unique-id>dreamy-swirles</unique-id>
+          </producer>
+          <send-events>false</send-events>
+          <produce-exception-handler class="null-produce-exception-handler"/>
+          <unique-id>DoLookup</unique-id>
+          <message-metrics-interceptor>
+            <unique-id>DoLookup-MessageMetrics</unique-id>
+            <timeslice-duration>
+              <unit>MINUTES</unit>
+              <interval>5</interval>
+            </timeslice-duration>
+            <timeslice-history-count>12</timeslice-history-count>
+          </message-metrics-interceptor>
+          <in-flight-workflow-interceptor>
+            <unique-id>DoLookup-InFlight</unique-id>
+          </in-flight-workflow-interceptor>
+          <jetty-pooling-workflow-interceptor>
+            <unique-id>boring-goldstine</unique-id>
+          </jetty-pooling-workflow-interceptor>
         </pooling-workflow>
       </workflow-list>
+      <unique-id>SoilData</unique-id>
+      <auto-start>true</auto-start>
     </channel>
   </channel-list>
   <message-error-digester class="standard-message-error-digester">
-    <digest-max-size>100</digest-max-size>
     <unique-id>ErrorDigest</unique-id>
+    <digest-max-size>100</digest-max-size>
   </message-error-digester>
 </adapter>
