@@ -5,7 +5,7 @@ EXPOSE 8080 5555
 ARG java_tool_opts
 ENV JAVA_TOOL_OPTIONS=$java_tool_opts
 
-COPY builder /root/builder
+COPY . /root/builder
 
 WORKDIR /opt/interlok
 
