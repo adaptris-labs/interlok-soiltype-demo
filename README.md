@@ -1,4 +1,4 @@
-# interlok-soiltype-demo [![Docker Build Status](https://img.shields.io/docker/cloud/build/adaptrislabs/interlok-soiltype-demo.svg)](https://hub.docker.com/r/adaptrislabs/interlok-soiltype-demo/)
+# interlok-soiltype-demo [![Docker Build Status](https://img.shields.io/docker/cloud/build/adaptrislabs/interlok-soiltype-demo.svg)](https://hub.docker.com/r/adaptrislabs/interlok-soiltype-demo/) ![check](https://github.com/adaptris-labs/interlok-soiltype-demo/workflows/check/badge.svg?branch=master)
 
 Example docker image that uses Interlok to cache calls to [https://rest.soilgrids.org/soilgrids/v2.0](https://rest.soilgrids.org/soilgrids/v2.0/docs), querying the soil classification for a specific lat/lon combination. If the lat/lon combination isn't in the cache, then we issue a query to rest.soilgrids.org and keep the results of the query in our cache.
 
