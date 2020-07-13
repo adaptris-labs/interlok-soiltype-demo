@@ -5,7 +5,6 @@ ext {
   swaggerDistribution = "https://github.com/swagger-api/swagger-ui/archive/v${swaggerVersion}.zip"
   swaggerRewriteUrl = "http://localhost:8080/lookups/swagger"
   lineSeparator = System.getProperty("line.separator")
-  interlokVersion='3.10.2B2-RELEASE'
   includeWar='true'
 }
 
