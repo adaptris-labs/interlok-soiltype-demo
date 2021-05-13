@@ -1,5 +1,5 @@
 ext {
-  interlokParentGradle = project.findProperty('interlokParentGradle') ?: 'https://raw.githubusercontent.com/adaptris-labs/interlok-build-parent/master/build.gradle'
+  interlokParentGradle = project.findProperty('interlokParentGradle') ?: 'https://raw.githubusercontent.com/adaptris/interlok-build-parent/main/v4/build.gradle'
   // interlokDistDirectory = project.findProperty('interlokDistDirectory') ?:  "/opt/interlok"
   swaggerVersion = "2.2.3"
   swaggerDistribution = "https://github.com/swagger-api/swagger-ui/archive/v${swaggerVersion}.zip"

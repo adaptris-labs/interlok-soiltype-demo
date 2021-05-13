@@ -67,10 +67,8 @@
         <standard-workflow>
           <consumer class="jetty-message-consumer">
             <unique-id>/lookups/swagger</unique-id>
-            <destination class="configured-consume-destination">
-              <destination>/lookups/swagger/*</destination>
-              <filter-expression>GET</filter-expression>
-            </destination>
+            <path>/lookups/swagger/*</path>
+            <methods>GET</methods>
             <parameter-handler class="jetty-http-parameters-as-metadata"/>
             <header-handler class="jetty-http-ignore-headers"/>
           </consumer>
@@ -131,9 +129,7 @@
         <pooling-workflow>
           <consumer class="jetty-message-consumer">
             <unique-id>/lookups/soiltype</unique-id>
-            <destination class="configured-consume-destination">
-              <destination>/lookups/soiltype</destination>
-            </destination>
+            <path>/lookups/soiltype</path>
             <parameter-handler class="jetty-http-parameters-as-metadata"/>
             <header-handler class="jetty-http-ignore-headers"/>
           </consumer>
@@ -239,9 +235,7 @@
                 <unique-id>add-cache-marker</unique-id>
                 <source-json class="string-payload-data-input-parameter"/>
                 <mapping-spec class="file-data-input-parameter">
-                  <destination class="configured-produce-destination">
-                    <destination>${adapter.soiltype.mapping.url}</destination>
-                  </destination>
+                  <url>${adapter.soiltype.mapping.url}</url>
                 </mapping-spec>
                 <target-json class="string-payload-data-output-parameter"/>
                 <metadata-filter class="regex-metadata-filter">

@@ -6,7 +6,7 @@ The output returned to the caller is modified so that a new json tag is emitted 
 
 Contains a swagger.yml (for the API call) file and a UI instance, so you can see what's going on under the covers.
 
-This will be built automatically from the latest `adaptris/interlok-base:latest-alpine` instance in docker hub; overlaying the latest release jars
+This will be built automatically from the latest `adaptris/interlok-base:latest-adoptopenjdk` instance in docker hub; overlaying the latest release jars
 
 * Point your browser to http://localhost:8080/interlok for the UI
 * Point your browser to http://localhost:8080/swagger to get the swagger definition for the sample interface
