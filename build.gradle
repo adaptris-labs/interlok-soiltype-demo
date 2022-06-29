@@ -18,7 +18,7 @@ dependencies {
   interlokRuntime ("com.adaptris:interlok-xinclude:$interlokVersion") { changing=true }
   interlokRuntime ("com.adaptris:interlok-apache-http:$interlokVersion") { changing=true }
   interlokRuntime ("com.adaptris:interlok-ehcache:$interlokVersion") { changing=true }
-  interlokRuntime ("net.sourceforge.csvjdbc:csvjdbc:1.0.39")
+  interlokRuntime ("net.sourceforge.csvjdbc:csvjdbc:1.0.40")
 
   // If you want javadocs.
   interlokJavadocs group: "com.adaptris", name: "interlok-apache-http", version: "$interlokVersion", changing: true, classifier: "javadoc", transitive: false
